@@ -3,8 +3,16 @@
  * During this time the thread should not be able to do anything else.
  * the function should return a promise just like before
  */
-
 function sleep(milliseconds) {
+    return new Promise((resolve,reject)=> {
+        const start=performance.now();
+         while(performance.now()-start<n){
+   
+         }
+         resolve();
+     })
+       
+    
 }
 
 module.exports = sleep;
