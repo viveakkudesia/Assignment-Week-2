@@ -43,7 +43,82 @@
   const bodyParser = require('body-parser');
   
   const app = express();
+ let todos=[];
+// GET all todos
+app.get('/todos', (req, res) => {
+  // Return the list of todos with a 200 OK status
+  res.status(200).json(todos);
+});
+
+// GET a specific todo by ID
+app.get('/todos/:id', (req, res) => {
+  const id = req.params.id;
+  // Find the todo with the matching ID
+  const todo = todos.find((todo) => todo.id === id);
+  if (todo) {
+    // If found, return the todo with a 200 OK status
+    res.status(200).json(todo);
+  } else {
+    // If not found, return a 404 Not Found status with an error message
+    res.status(404).send('Todo not found');
+  }
+});
+
+// POST a new todo
+app.post('/todos', (req, res) => {
+  // Generate a random ID for the new todo
+  const id = Math.floor(Math.random() * (100 - 1 + 1)) + 1;
+  const title = req.body.title;
+  const completed = req.body.completed;
+  // Create a new todo object
+  const newTodo = {
+    id: id.toString(), // Convert ID to a string for consistency
+    title: title,
+    completed: completed
+  };
+  // Add the new todo to the list
+  todos.push(newTodo);
+  // Return the newly created todo with a 201 Created status
+  res.status(201).json(newTodo);
+});
+
+// PUT to update an existing todo by ID
+app.put('/todos/:id', (req, res) => {
+  const id = req.params.id;
+  // Find the todo with the matching ID
+  const todo = todos.find((todo) => todo.id == id);
+  if (todo) {
+    const title = req.body.title;
+    const completed = req.body.completed;
+    // Update the todo's title and completed status if new values are provided
+    todo.title = title !== undefined ? title : todo.title;
+    todo.completed = completed !== undefined ? completed : todo.completed;
+    // Return the updated todo with a 200 OK status
+    res.status(200).json(todo);
+  } else {
+    // If not found, return a 404 Not Found status with an error message
+    res.status(404).send('Todo not found');
+  }
+});
+
+// DELETE a todo by ID
+app.delete('/todos/:id', (req, res) => {
+  const id = req.params.id;
+  // Find the index of the todo with the matching ID
+  const todoIndex = todos.findIndex((todo) => todo.id == id);
+  if (todoIndex !== -1) {
+    // If found, remove the todo from the list
+    todos.splice(todoIndex, 1);
+    // Return a 200 OK status with a success message
+    res.status(200).send('Todo deleted successfully');
+  } else {
+    // If not found, return a 404 Not Found status with an error message
+    res.status(404).send('Todo not found');
+  }
+});
+
   
   app.use(bodyParser.json());
+  app.listen(3000);
   
   module.exports = app;
